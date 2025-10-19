@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+httpx
+python-dotenv
+pydantic
+azure-cognitiveservices-speech
+python-multipart
+pillow

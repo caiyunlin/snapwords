@@ -1,0 +1,17 @@
+body { font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; background:#f7f7f7; }
+
+/* Constrain max width for better mobile readability */
+body, .weui-form { max-width: 640px; margin: 0 auto; }
+
+#words .weui-cell__bd { font-size:14px; }
+
+/* Editable word list tweaks */
+.word-row { align-items: center; }
+.word-row .weui-cell__bd { padding-right:8px; }
+.word-delete { font-size:12px; padding:4px 8px; }
+
+/* Buttons spacing tweak */
+.weui-btn { font-size:15px; }
+
+/* Hide default outline on input focus for cleaner mobile look */
+.weui-input:focus { outline: none; }

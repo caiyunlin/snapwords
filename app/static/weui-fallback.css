@@ -1,0 +1,11 @@
+/* Minimal fallback if CDN WEUI fails. Not full WEUI. */
+body { font-family: Arial, sans-serif; margin:12px; }
+.weui-btn { display:block; width:100%; padding:10px; background:#07c160; color:#fff; border:none; border-radius:4px; font-size:16px; }
+.weui-form__title { font-size:18px; margin:8px 0; }
+.weui-form__desc { font-size:13px; color:#555; margin-bottom:8px; }
+.weui-uploader__files { list-style:none; padding:0; margin:0 0 8px 0; display:flex; gap:8px; }
+.weui-uploader__input-box { width:80px; height:80px; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; border-radius:4px; }
+.weui-uploader__input-box input { opacity:0; width:100%; height:100%; cursor:pointer; }
+.weui-loadmore { display:flex; align-items:center; justify-content:center; color:#666; font-size:13px; margin-top:8px; }
+.weui-loading { width:20px; height:20px; border:2px solid #ccc; border-top-color:#07c160; border-radius:50%; animation:spin 1s linear infinite; margin-right:6px; }
+@keyframes spin { to { transform:rotate(360deg); } }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>SnapWords.AI</title>
+  <!-- WEUI CDN (primary) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weui/2.6.25/style/weui.min.css" />
+  <!-- Fallback minimal WEUI subset (will be activated via JS if CDN blocked) -->
+  <link rel="stylesheet" href="/weui-fallback.css" id="weui-fallback" disabled />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="weui-msg__title" style="text-align:center; padding:12px 0; font-size:20px; font-weight:600;">SnapWords.AI</div>
+
+  <!-- Image Upload Card -->
+  <div class="weui-form" style="margin-bottom:18px;">
+    <div class="weui-form__text-area">
+      <h2 class="weui-form__title">Upload Image</h2>
+      <div class="weui-form__desc">Take a photo of a page or choose an existing image to extract words.</div>
+    </div>
+    <div class="weui-form__control-area">
+      <div class="weui-uploader" id="uploader">
+        <div class="weui-uploader__hd">
+          <p class="weui-uploader__title">Select Image</p>
+          <div class="weui-uploader__info" id="uploaderInfo">0</div>
+        </div>
+        <div class="weui-uploader__bd">
+          <ul class="weui-uploader__files" id="uploaderFiles"></ul>
+          <div class="weui-uploader__input-box">
+            <input class="weui-uploader__input" type="file" id="imageInput" accept="image/*" />
+          </div>
+        </div>
+      </div>
+      <div class="weui-btn-area">
+        <button id="uploadBtn" class="weui-btn weui-btn_primary">Upload & Extract</button>
+      </div>
+      <div id="uploadStatus" class="weui-loadmore" style="display:none;">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">Processing...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Words Result -->
+  <div id="wordsCard" class="weui-cells__title" style="display:none;">Extracted Words</div>
+  <div id="words" class="weui-cells weui-cells_after-title" style="display:none;"></div>
+
+  <!-- Speak Text Card -->
+  <div class="weui-form" style="margin-top:24px;">
+    <div class="weui-form__text-area">
+      <h2 class="weui-form__title">Speak Text</h2>
+      <div class="weui-form__desc">Enter any English text to hear pronunciation.</div>
+    </div>
+    <div class="weui-form__control-area">
+      <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+          <div class="weui-cell__bd">
+            <input id="speakText" class="weui-input" type="text" placeholder="Enter text" />
+          </div>
+        </div>
+      </div>
+      <div class="weui-btn-area">
+        <button id="speakBtn" class="weui-btn weui-btn_primary">Speak</button>
+      </div>
+      <div id="speakStatus" class="weui-loadmore" style="display:none;">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">Synthesizing...</span>
+      </div>
+      <div class="weui-cells__title" style="display:none;" id="audioTitle">Audio</div>
+      <div class="weui-cells" style="display:none;" id="audioCell">
+        <div class="weui-cell">
+          <div class="weui-cell__bd">
+            <audio id="audioPlayer" controls style="width:100%;"></audio>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script src="https://res.wx.qq.com/open/libs/weui/2.5.11/weui.min.js"></script> -->
+  <script>
+    // Fallback activation if WEUI failed to load.
+    window.addEventListener('load', function() {
+      if (!window.weui) {
+        const fallback = document.getElementById('weui-fallback');
+        if (fallback) fallback.removeAttribute('disabled');
+        console.warn('WEUI CDN not reachable, using fallback styles.');
+      }
+    });
+  </script>
+  <script src="/script.js"></script>
+</body>
+</html>
