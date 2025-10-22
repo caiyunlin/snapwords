@@ -100,19 +100,19 @@ function renderEditableWords() {
   const rows = currentWords.map((w, i) => {
     return `<div class="weui-cell word-row">
       <div class="weui-cell__bd"><input type="text" class="weui-input word-edit" data-index="${i}" value="${w}" /></div>
-      <div class="weui-cell__ft"><button class="weui-btn weui-btn_mini weui-btn_warn word-delete" data-index="${i}">删除</button></div>
+      <div class="weui-cell__ft"><button class="weui-btn weui-btn_mini weui-btn_warn word-delete" data-index="${i}">Delete</button></div>
     </div>`;
   }).join('');
   const actions = `<div class="weui-btn-area" style="margin-top:12px;">
-     <button id="copyWordsBtn" class="weui-btn weui-btn_default">复制全部</button>
+     <button id="copyWordsBtn" class="weui-btn weui-btn_default">Copy All</button>
      <div style="margin-top:12px;" class="weui-cells weui-cells_form">
        <div class="weui-cell">
          <div class="weui-cell__bd">
-           <input type="number" id="speakInterval" class="weui-input" min="0.5" step="0.5" value="1.5" placeholder="间隔秒数" />
+           <input type="number" id="speakInterval" class="weui-input" min="0.5" step="0.5" value="1.5" placeholder="Interval (seconds)" />
          </div>
        </div>
      </div>
-     <button id="speakAllBtn" class="weui-btn weui-btn_primary" style="margin-top:8px;">朗读单词</button>
+     <button id="speakAllBtn" class="weui-btn weui-btn_primary" style="margin-top:8px;">Speak All Words</button>
   </div>`;
   wordsDiv.innerHTML = rows + actions;
   // Attach input change listeners
@@ -151,7 +151,7 @@ if (imageInput) {
 
 async function speakAllWords() {
   if (!currentWords.length) {
-    weui.alert('没有单词');
+    weui.alert('No words');
     return;
   }
   const intervalInput = document.getElementById('speakInterval');
@@ -173,7 +173,7 @@ async function speakAllWords() {
       });
       if (!resp.ok) {
         const j = await resp.json().catch(() => ({}));
-        weui.topTips('朗读失败: ' + (j.error || resp.status), 2000);
+        weui.topTips('Speak failed: ' + (j.error || resp.status), 2000);
         continue;
       }
       const blob = await resp.blob();
@@ -183,10 +183,11 @@ async function speakAllWords() {
       // 等待音频播放结束或固定间隔，以先到者为准
       await waitForPlaybackOrTimeout(player, gap);
     } catch (e) {
-      weui.topTips('错误: ' + e.message, 2000);
+      weui.topTips('Error: ' + e.message, 2000);
     }
   }
 }
+// Wait for audio playback end or timeout, whichever happens first
 
 function waitForPlaybackOrTimeout(player, gapSeconds) {
   return new Promise(resolve => {
