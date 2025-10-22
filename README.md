@@ -3,6 +3,8 @@
 SnapWords.AI lets you snap a photo of English text and quickly hear and study the extracted words.
 
 ## Quick Test
+https://snapwords.bravemushroom-502e9645.southeastasia.azurecontainerapps.io/  
+
 ![](app/static/qr.png)
 
 ## Features
