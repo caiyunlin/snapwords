@@ -3,15 +3,31 @@ body { font-family: -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,
 /* Constrain max width for better mobile readability */
 body, .weui-form { max-width: 640px; margin: 0 auto; }
 
-#words .weui-cell__bd { font-size:14px; }
-
-/* Editable word list tweaks */
-.word-row { align-items: center; }
-.word-row .weui-cell__bd { padding-right:8px; }
-.word-delete { font-size:12px; padding:4px 8px; }
-
 /* Buttons spacing tweak */
 .weui-btn { font-size:15px; }
 
 /* Hide default outline on input focus for cleaner mobile look */
 .weui-input:focus { outline: none; }
+
+.prompt-block { margin-top: 18px; }
+.prompt-label { margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #1f2d3d; }
+.template-radio-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.template-radio-option { display: inline-flex; align-items: center; gap: 6px; padding: 10px 12px; border: 1px solid #d9d9d9; border-radius: 999px; background: #fff; font-size: 14px; color: #1f2d3d; }
+.template-radio-option input { margin: 0; }
+.prompt-textarea { min-height: 120px; width: 100%; border: none; resize: vertical; font-size: 14px; line-height: 1.6; background: transparent; }
+.prompt-textarea:focus { outline: none; }
+.prompt-panel,
+.speak-panel-wrap { padding: 12px 14px; border-radius: 12px; background: #fff; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06); }
+.prompt-hint { padding: 8px 0 2px; font-size: 12px; line-height: 1.5; color: #576b95; }
+.speak-textarea { min-height: 220px; width: 100%; border: none; resize: vertical; font-size: 14px; line-height: 1.7; background: transparent; }
+.speak-textarea:focus { outline: none; }
+.speak-actions { display: grid; gap: 10px; margin-top: 14px; }
+.speak-settings { margin-top: 14px; }
+.playback-progress { margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: #fff; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06); }
+.playback-progress__meta { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: #45556c; margin-bottom: 10px; }
+.playback-progress__track { width: 100%; height: 10px; border-radius: 999px; background: #e8edf3; overflow: hidden; }
+.playback-progress__fill { width: 0; height: 100%; background: linear-gradient(90deg, #07c160, #1f9d55); transition: width 0.2s ease; }
+
+@media (min-width: 600px) {
+	.speak-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -8,8 +8,9 @@ https://snapwords.bravemushroom-502e9645.southeastasia.azurecontainerapps.io/
 ![](app/static/qr.png)
 
 ## Features
-* Upload an image and extract words (Azure OCR Read API implementation).
-* Clean, deduplicate and normalize words.
+* Upload an image and extract content with prompt templates or custom prompts.
+* Built-in template 1 extracts English words; template 2 extracts Chinese explanations.
+* Custom prompt extraction is supported when Azure OpenAI is configured.
 * Convert text to speech using Azure Speech Service.
 * Minimal web UI served by FastAPI static files.
 
@@ -40,6 +41,11 @@ AZURE_SPEECH_KEY=<your-speech-key>
 AZURE_SPEECH_REGION=<speech-region>
 # Optional explicit speech endpoint override (if provided by Azure):
 AZURE_SPEECH_ENDPOINT=https://eastus2.tts.speech.microsoft.com
+# Optional custom prompt extraction via Azure OpenAI:
+AZURE_OPENAI_ENDPOINT=https://<your-openai-resource>.openai.azure.com/
+AZURE_OPENAI_KEY=<your-openai-key>
+AZURE_OPENAI_DEPLOYMENT=<your-chat-deployment-name>
+AZURE_OPENAI_API_VERSION=2024-10-21
 # Optional tuning (defaults shown)
 AZURE_OCR_POLL_INTERVAL_MS=500
 AZURE_OCR_MAX_POLL=20
@@ -58,10 +64,19 @@ Navigate to: http://localhost:8000
 
 ## API
 ### POST /upload
-Multipart form field `file` (image). Returns JSON:
+Multipart form field `file` (image). Optional form fields: `prompt_template`, `prompt_text`.
+
+Built-in templates:
+* `template_1`: only extract English words.
+* `template_2`: only extract Chinese explanations.
+* `custom`: use `prompt_text` as the extraction instruction.
+
+Returns JSON:
 ```json
-{"success": true, "data": {"words": ["apple", "banana"]}}
+{"success": true, "data": {"items": ["apple", "banana"], "words": ["apple", "banana"]}}
 ```
+
+If you use `custom`, the backend needs Azure OpenAI configuration; otherwise it returns a clear configuration error.
 
 ### POST /speak
 JSON body: `{ "text": "Hello world" }` streams audio response.

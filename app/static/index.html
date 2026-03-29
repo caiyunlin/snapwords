@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -13,16 +13,16 @@
 <body>
   <div class="weui-msg__title" style="text-align:center; padding:12px 0; font-size:20px; font-weight:600;">SnapWords.AI</div>
 
-  <!-- Image Upload Card -->
+  <!-- 第一步：上传图片 -->
   <div class="weui-form" style="margin-bottom:18px;">
     <div class="weui-form__text-area">
-      <h2 class="weui-form__title">Upload Image</h2>
-      <div class="weui-form__desc">Take a photo of a page or choose an existing image to extract words.</div>
+      <h2 class="weui-form__title">第一步：上传图片</h2>
+      <div class="weui-form__desc">拍摄课本页面或选择已有图片，系统会按上面的提示词提取内容。</div>
     </div>
     <div class="weui-form__control-area">
       <div class="weui-uploader" id="uploader">
         <div class="weui-uploader__hd">
-          <p class="weui-uploader__title">Select Image</p>
+          <p class="weui-uploader__title">选择图片</p>
           <div class="weui-uploader__info" id="uploaderInfo">0</div>
         </div>
         <div class="weui-uploader__bd">
@@ -32,42 +32,76 @@
           </div>
         </div>
       </div>
+      <div class="prompt-block">
+        <div class="prompt-label">选择模板</div>
+        <div class="template-radio-group" id="promptTemplateGroup">
+          <label class="template-radio-option">
+            <input type="radio" name="promptTemplate" value="template_2" checked />
+            <span>中文词条</span>
+          </label>
+          <label class="template-radio-option">
+            <input type="radio" name="promptTemplate" value="template_1" />
+            <span>英文词条</span>
+          </label>
+          <label class="template-radio-option">
+            <input type="radio" name="promptTemplate" value="custom" />
+            <span>自定义</span>
+          </label>
+        </div>
+      </div>
+      <div class="prompt-block">
+        <div class="prompt-label">提示词</div>
+        <textarea id="promptText" class="weui-textarea prompt-textarea prompt-panel" rows="5" placeholder="请输入提取提示词"></textarea>
+        <div class="prompt-hint" id="promptHint">模板 1 会按词条行提取英文词头，尽量排除白底例句中的英文。</div>
+      </div>
       <div class="weui-btn-area">
-        <button id="uploadBtn" class="weui-btn weui-btn_primary">Upload & Extract</button>
+        <button id="uploadBtn" class="weui-btn weui-btn_primary">上传并提取</button>
       </div>
       <div id="uploadStatus" class="weui-loadmore" style="display:none;">
         <i class="weui-loading"></i>
-        <span class="weui-loadmore__tips">Processing...</span>
+        <span class="weui-loadmore__tips">处理中...</span>
       </div>
     </div>
   </div>
 
-  <!-- Words Result -->
-  <div id="wordsCard" class="weui-cells__title" style="display:none;">Extracted Words</div>
-  <div id="words" class="weui-cells weui-cells_after-title" style="display:none;"></div>
-
-  <!-- Speak Text Card -->
+  <!-- 第二步：编辑并朗读内容 -->
   <div class="weui-form" style="margin-top:24px;">
     <div class="weui-form__text-area">
-      <h2 class="weui-form__title">Speak Text</h2>
-      <div class="weui-form__desc">Enter any English text to hear pronunciation.</div>
+      <h2 class="weui-form__title">第二步：编辑并朗读内容</h2>
+      <div class="weui-form__desc">提取结果会直接显示在下面。你可以逐行编辑，然后按顺序朗读。</div>
     </div>
     <div class="weui-form__control-area">
-      <div class="weui-cells weui-cells_form">
+      <div class="speak-panel-wrap">
+        <textarea id="speakText" class="weui-textarea speak-textarea" rows="8" placeholder="请输入要朗读的内容，每行一条"></textarea>
+      </div>
+      <div class="weui-cells weui-cells_form speak-settings">
         <div class="weui-cell">
+          <div class="weui-cell__hd"><label class="weui-label" for="speakInterval">每行间隔(秒)</label></div>
           <div class="weui-cell__bd">
-            <input id="speakText" class="weui-input" type="text" placeholder="Enter text" />
+              <input type="number" id="speakInterval" class="weui-input" min="0" step="0.5" value="3" placeholder="朗读间隔（秒）" />
           </div>
+          <div class="weui-cell__ft">秒</div>
         </div>
       </div>
-      <div class="weui-btn-area">
-        <button id="speakBtn" class="weui-btn weui-btn_primary">Speak</button>
+      <div class="weui-btn-area speak-actions">
+        <button id="speakBtn" class="weui-btn weui-btn_primary">开始朗读</button>
+        <button id="pauseSpeakBtn" class="weui-btn weui-btn_default" disabled>暂停</button>
+        <button id="resumeSpeakBtn" class="weui-btn weui-btn_default" disabled>继续</button>
       </div>
       <div id="speakStatus" class="weui-loadmore" style="display:none;">
         <i class="weui-loading"></i>
-        <span class="weui-loadmore__tips">Synthesizing...</span>
+        <span class="weui-loadmore__tips">语音合成中...</span>
       </div>
-      <div class="weui-cells__title" style="display:none;" id="audioTitle">Audio</div>
+      <div class="playback-progress" id="playbackProgress" style="display:none;">
+        <div class="playback-progress__meta">
+          <span id="playbackProgressLabel">准备开始</span>
+          <span id="playbackProgressCount">0 / 0</span>
+        </div>
+        <div class="playback-progress__track">
+          <div class="playback-progress__fill" id="playbackProgressFill"></div>
+        </div>
+      </div>
+      <div class="weui-cells__title" style="display:none;" id="audioTitle">音频播放</div>
       <div class="weui-cells" style="display:none;" id="audioCell">
         <div class="weui-cell">
           <div class="weui-cell__bd">

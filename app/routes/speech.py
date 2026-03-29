@@ -18,7 +18,7 @@ async def get_default_voice():
 async def speak(req: SpeakRequest):
     """Accept text and return synthesized speech audio stream."""
     if not req.text.strip():
-        raise HTTPException(status_code=400, detail="Text cannot be empty")
+        raise HTTPException(status_code=400, detail="文本内容不能为空")
     try:
         audio_bytes, content_type = await synthesize_speech(req.text, voice=req.voice)
     except AzureSpeechConfigError as e:

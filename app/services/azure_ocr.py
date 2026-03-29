@@ -16,6 +16,7 @@ from __future__ import annotations
 import os
 import asyncio
 import httpx
+from dataclasses import dataclass
 from typing import List
 
 AZURE_OCR_ENDPOINT = os.getenv("AZURE_OCR_ENDPOINT")
@@ -26,14 +27,47 @@ MAX_POLL = int(os.getenv("AZURE_OCR_MAX_POLL", "20"))
 
 READ_API_PATH = "/vision/v3.2/read/analyze"  # Adjust if using different API version.
 
+
+@dataclass
+class OCRTextResult:
+    words: List[str]
+    lines: List[str]
+    line_details: List["OCRLine"]
+
+
+@dataclass
+class OCRLine:
+    text: str
+    left: float
+    top: float
+    right: float
+    bottom: float
+
 class AzureOCRConfigError(RuntimeError):
     """Raised when OCR configuration is missing."""
 
 class AzureOCROperationError(RuntimeError):
     """Raised when OCR operation fails or times out."""
 
+
+async def analyze_image_text(image_bytes: bytes) -> OCRTextResult:
+    """Run Azure Read OCR and return both word-level and line-level text."""
+    result_json = await _run_read_analysis(image_bytes)
+    return OCRTextResult(
+        words=_parse_read_results(result_json),
+        lines=_parse_read_lines(result_json),
+        line_details=_parse_read_line_details(result_json),
+    )
+
+
 async def extract_words_from_image(image_bytes: bytes) -> List[str]:
     """Run Azure Read OCR on the provided image bytes and return list of words."""
+    result = await analyze_image_text(image_bytes)
+    return result.words
+
+
+async def _run_read_analysis(image_bytes: bytes) -> dict:
+    """Submit image to Azure Read API and return the succeeded payload."""
     missing = []
     if not AZURE_OCR_ENDPOINT:
         missing.append("AZURE_OCR_ENDPOINT")
@@ -69,7 +103,7 @@ async def extract_words_from_image(image_bytes: bytes) -> List[str]:
             result_json = poll_resp.json()
             status = result_json.get("status")
             if status == "succeeded":
-                return _parse_read_results(result_json)
+                return result_json
             if status == "failed":
                 raise AzureOCROperationError("OCR analysis failed")
             await asyncio.sleep(interval)
@@ -97,3 +131,43 @@ def _parse_read_results(data: dict) -> List[str]:
                     for part in line_text.split():
                         words.append(part)
     return words
+
+
+def _parse_read_lines(data: dict) -> List[str]:
+    """Extract non-empty lines from Azure Read API succeeded payload."""
+    lines: List[str] = []
+    analyze = data.get("analyzeResult", {})
+    read_results = analyze.get("readResults", [])
+    for page in read_results:
+        for line in page.get("lines", []):
+            line_text = (line.get("text") or "").strip()
+            if line_text:
+                lines.append(line_text)
+    return lines
+
+
+def _parse_read_line_details(data: dict) -> List[OCRLine]:
+    """Extract positioned OCR lines from Azure Read API succeeded payload."""
+    line_details: List[OCRLine] = []
+    analyze = data.get("analyzeResult", {})
+    read_results = analyze.get("readResults", [])
+    for page in read_results:
+        for line in page.get("lines", []):
+            text = (line.get("text") or "").strip()
+            if not text:
+                continue
+            bounding_box = line.get("boundingBox") or []
+            xs = bounding_box[0::2]
+            ys = bounding_box[1::2]
+            if xs and ys:
+                left = float(min(xs))
+                right = float(max(xs))
+                top = float(min(ys))
+                bottom = float(max(ys))
+            else:
+                left = 0.0
+                right = 0.0
+                top = 0.0
+                bottom = 0.0
+            line_details.append(OCRLine(text=text, left=left, top=top, right=right, bottom=bottom))
+    return line_details
